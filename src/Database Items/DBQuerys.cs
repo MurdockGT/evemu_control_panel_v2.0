@@ -32,27 +32,17 @@ namespace EveControlPanelApplication
         //Constructor
         public DBConnect()
         {
-            Initialize();
-        }
-
-        //Initialize values
-        public void Initialize()
-        {
-            // We need a cleaner way of doing this, i think accessing the settings we already have through the xml file.
-            server = DBinfo.hostTextBox.Text;
-            database = DBinfo.databaseTextBox.Text;
-            uid = DBinfo.usernameTextBox.Text;
-            password = DBinfo.passwordTextBox.Text;
-            string connectionString;
-            connectionString = "SERVER=" + server + ";" + "DATABASE=" +
-            database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";";
-
-            connection = new MySqlConnection(connectionString);
+           OpenConnection();
         }
 
         //open connection to database
         private bool OpenConnection()
         {
+            string[] dbcon = DBinfo.xmlLoad();
+            string connectionString = "SERVER=" + dbcon[0] + ";" + "DATABASE=" +
+            dbcon[4] + ";" + "UID=" + dbcon[1] + ";" + "PASSWORD=" + dbcon[2] + ";";
+            connection = new MySqlConnection(connectionString);
+
             try
             {
                 connection.Open();
@@ -173,8 +163,8 @@ namespace EveControlPanelApplication
                     acctrole = "2";
                 }
                 
-                // Need to fix password back to MD5 hash.
-                query = "INSERT INTO account (accountName, password, role) VALUES ('" + username + "', '" + password + "', '"+ accountLevel +"')";
+                
+                query = "INSERT INTO account (accountName, password, role) VALUES ('" + username + "', '" + CalculateMD5Hash(password) + "', '" + accountLevel + "')";
                 
                 //Create the command, Must declare connection here, If not you will have an error.
                 MySqlCommand cmd = new MySqlCommand(query, connection);

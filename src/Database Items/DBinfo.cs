@@ -21,14 +21,20 @@ namespace EveControlPanelApplication
         public mySqlLogin()
         {
             InitializeComponent();
-           
+            xmlLoad();
         }
 
         private void testConnectionButton_Click(object sender, EventArgs e)
         {
-            dbConnect = new DBConnect();
-            dbConnect.connection.Open();
-            MessageBox.Show("Database connected");
+            DBConnect db = new DBConnect();
+            if (db.OpenConnection())
+            {
+                MessageBox.Show("It looks like it's working! Or is it...", "Connection Info");
+            }
+            else
+            {
+                MessageBox.Show("Connection Problem.");
+            }
             
             
         }
@@ -111,9 +117,48 @@ namespace EveControlPanelApplication
             }
         }
 
-        private void xmlLoad()
+        public string[] xmlLoad()
         {
-            // Not done yet..
+            string[] dbcon = new string[5];
+
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\EvECP\\ecp_config.xml"))
+            {
+                XmlTextReader xmltext = new XmlTextReader(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\EvECP\\ecp_config.xml");
+
+                int i = 0;
+                while (xmltext.Read())
+                {
+                    switch (xmltext.NodeType)
+                    {
+                        case XmlNodeType.Text:
+                            dbcon[i] = xmltext.Value;
+                            i++;
+                            break;
+                    }
+                }
+                // Close it or the app goes nuts at me...
+                xmltext.Close();
+
+                hostTextBox.Text = dbcon[0];
+                usernameTextBox.Text = dbcon[1];
+                passwordTextBox.Text = dbcon[2];
+                portTextBox.Text = dbcon[3];
+                databaseTextBox.Text = dbcon[4];
+
+                return dbcon;
+            }
+            else
+            {
+                MessageBox.Show("Could not find a XML config file saved, please create a new one.", "Error");
+                return null;
+            }
+        }
+
+       
+
+        private void cancelButton_Click_1(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
