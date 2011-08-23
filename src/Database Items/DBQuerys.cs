@@ -21,10 +21,6 @@ namespace EveControlPanelApplication
     class DBConnect
     {
         public MySqlConnection connection;
-        private string server;
-        private string database;
-        private string uid;
-        private string password;
         private EveControlPanelApplication.mySqlLogin DBinfo = new EveControlPanelApplication.mySqlLogin();
         private accountEditorForm accountEditorForm2 = new accountEditorForm();
        
@@ -36,7 +32,7 @@ namespace EveControlPanelApplication
         }
 
         //open connection to database
-        private bool OpenConnection()
+        public bool OpenConnection()
         {
             string[] dbcon = DBinfo.xmlLoad();
             string connectionString = "SERVER=" + dbcon[0] + ";" + "DATABASE=" +

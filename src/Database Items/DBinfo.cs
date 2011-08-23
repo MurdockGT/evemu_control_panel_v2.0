@@ -15,7 +15,6 @@ namespace EveControlPanelApplication
 {
     public partial class mySqlLogin : Form
     {
-        private DBConnect dbConnect;
         
 
         public mySqlLogin()
